@@ -76,7 +76,9 @@ type Injector struct {
 	Pkg        string
 	Param      string // Param represents the parameter name.
 	Alias      string
+
 	typ        ast.Expr // Typ represents the type of the parameter.
+	dependency *DiFunc
 }
 
 // GetObjName returns the object name of the injector.
@@ -516,6 +518,7 @@ func (p *Parser) checkInjectorLegal() bool {
 						injector.ProviderId, pkg.path, fn.name, injector.Param)
 					return false
 				}
+				injector.dependency = provider
 			}
 		}
 	}
@@ -536,12 +539,9 @@ func (p *Parser) increaseProviderPrioritys(c chain, fn *DiFunc) bool {
 	// Find all injectors for the provider's corresponding function.
 	for _, injector := range fn.injectors {
 		clone := c.clone()
-		depend := p.findProvider(injector.ProviderId)
-		if depend != nil {
-			depend.sort++
-			if !p.increaseProviderPrioritys(clone, depend) {
-				return false
-			}
+		injector.dependency.sort++
+		if !p.increaseProviderPrioritys(clone, injector.dependency) {
+			return false
 		}
 	}
 	return true
