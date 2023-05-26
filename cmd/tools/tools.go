@@ -55,6 +55,6 @@ func NewTools(name, class string, age int, bus *eb.EventBus, mq *mqtt.Server) *T
 // @inject({"param":"name", "id":"name"})
 // @inject({"param":"class", "id":"class"})
 // @inject({"param":"bus", "id":"tools.eventbus"})
-func NewTools2(name, class string, bus eventbus.EventBus) *Tools {
+func NewTools2(name, class string, bus eventbus.EventBus, md5 *Md5) *Tools {
 	return &Tools{}
 }

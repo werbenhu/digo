@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"sort"
 	"strings"
 
 	"golang.org/x/tools/go/packages"
@@ -18,6 +19,46 @@ const (
 	// RegexpText represents the regular expression pattern for parsing annotations.
 	RegexpText = `^//\s*@(provider|inject|group)\s*\((.*)\s*\)`
 )
+
+// the dependency chain of the provider
+type chain []*DiFunc
+
+func newChain() chain {
+	return make(chain, 0)
+}
+
+// clone returns a copy of the history.
+func (c chain) clone() chain {
+	newly := make(chain, len(c))
+	copy(newly, c)
+	return newly
+}
+
+// path returns the dependency chain of the provider.
+func (c chain) String() string {
+	if len(c) == 0 {
+		return ""
+	}
+	var p string
+	separator := " -> "
+	for _, fn := range c {
+		p = p + fn.provider + separator
+	}
+	return p[:len(p)-len(separator)]
+}
+
+// insert adds a provider to the current dependency chain.
+// It returns false if there is a cyclic dependency, true otherwise.
+func (c *chain) insert(fn *DiFunc) bool {
+	for _, f := range *c {
+		if f.provider == fn.provider {
+			*c = append(*c, fn)
+			return false
+		}
+	}
+	*c = append(*c, fn)
+	return true
+}
 
 // Provider represents a provider.
 type Provider struct {
@@ -48,6 +89,12 @@ func (i *Injector) GetArgName() string {
 	return i.Param
 }
 
+func replaceSeparator(id string) string {
+	name := strings.ReplaceAll(id, ".", "_")
+	name = strings.ReplaceAll(name, "/", "_")
+	return name
+}
+
 type DiFunc struct {
 	name      string
 	injectors []*Injector
@@ -56,12 +103,6 @@ type DiFunc struct {
 	sort      int
 	pkg       *DiPackage
 	file      *DiFile
-}
-
-func replaceSeparator(id string) string {
-	name := strings.ReplaceAll(id, ".", "_")
-	name = strings.ReplaceAll(name, "/", "_")
-	return name
 }
 
 func NewDiFunc(pkg *DiPackage, file *DiFile, name string) *DiFunc {
@@ -89,6 +130,29 @@ func (fn *DiFunc) groupFuncName() string {
 	return "group_" + replaceSeparator(fn.group) + "_" + fn.name
 }
 
+type DiFuncs []*DiFunc
+
+// Len returns the length of the circle.
+func (idx DiFuncs) Len() int {
+	return len(idx)
+}
+
+// Swap swaps the elements at positions i and j in the circle.
+func (idx DiFuncs) Swap(i, j int) {
+	idx[i], idx[j] = idx[j], idx[i]
+}
+
+// Less compares the elements at positions i and j in the slice
+// and returns true if the element at position i is less than the element at position j.
+func (idx DiFuncs) Less(i, j int) bool {
+	return idx[i].sort > (idx[j]).sort
+}
+
+// Sort sorts the elements in the slice in reverse order.
+func (idx DiFuncs) Sort() {
+	sort.Sort(idx)
+}
+
 type DiImport struct {
 	name string // Alias represents the package alias.
 	path string // Path represents the import path.
@@ -113,7 +177,7 @@ type DiPackage struct {
 	path   string
 	folder string
 
-	funcs map[string]*DiFunc
+	funcs DiFuncs
 	files map[string]*DiFile
 }
 
@@ -122,7 +186,7 @@ func NewDiPackage(name string, path string, folder string) *DiPackage {
 		name:   name,
 		path:   path,
 		folder: folder,
-		funcs:  make(map[string]*DiFunc),
+		funcs:  make(DiFuncs, 0),
 		files:  make(map[string]*DiFile),
 	}
 }
@@ -380,7 +444,7 @@ func (p *Parser) parseFunc(pkg *DiPackage, fn *DiFunc, decl *ast.FuncDecl) error
 				}
 			}
 			if !found {
-				return fmt.Errorf("all parameters of the provider must be injected, params: %v have not been injected yet, in package: %s Func: %s\n",
+				return fmt.Errorf("all parameters of the provider must be injected, param: %v have not been injected yet, in pkg: %s, function: %s\n",
 					name.String(), pkg.path, fn.name)
 			}
 		}
@@ -411,7 +475,7 @@ func (p *Parser) parse(pkgs []*packages.Package) error {
 					}
 
 					if len(diFunc.provider) > 0 || len(diFunc.group) > 0 {
-						diPkg.funcs[diFunc.name] = diFunc
+						diPkg.funcs = append(diPkg.funcs, diFunc)
 					}
 				}
 			}
@@ -423,6 +487,81 @@ func (p *Parser) parse(pkgs []*packages.Package) error {
 		}
 	}
 	return nil
+}
+
+// findProviderById 根据id查找provider
+// findProviderById finds a provider by its ID.
+func (p *Parser) findProviderById(id string) *DiFunc {
+	for _, pkg := range p.packages {
+		for _, fn := range pkg.funcs {
+			if fn.provider == id {
+				return fn
+			}
+		}
+	}
+	return nil
+}
+
+// checkInjectorLegal 检查注入的对象是否合法，如果需要注入的provider不存在则返回false
+// checkInjectorLegal checks if the injected object is legal, returns false if the required provider does not exist.
+func (p *Parser) checkInjectorLegal() bool {
+	for _, pkg := range p.packages {
+		for _, fn := range pkg.funcs {
+			// 查找出每个injector所归属的provider
+			// Find the provider to which each injector belongs.
+			for _, injector := range fn.injectors {
+				provider := p.findProviderById(injector.ProviderId)
+				if provider == nil {
+					log.Printf("[ERROR] provider id:%s not found, used in package:%s, func:%s, param:%s",
+						injector.ProviderId, pkg.path, fn.name, injector.Param)
+					return false
+				}
+			}
+		}
+	}
+	return true
+}
+
+// increaseProviderPrioritys 查找某个provider依赖的所有provider，
+// 并将依赖的provider的优先级提高，history用来记录依赖链
+// increaseProviderPrioritys finds all providers that a specific provider depends on and increases their priority.
+// It uses the 'history' parameter to track the dependency chain.
+func (p *Parser) increaseProviderPrioritys(c chain, fn *DiFunc) bool {
+	if !c.insert(fn) {
+		log.Printf("[ERROR] provider circular injection: %s\n", c.String())
+		return false
+	}
+
+	// 找出provider对应函数的所有injectors
+	// Find all injectors for the provider's corresponding function.
+	for _, injector := range fn.injectors {
+		clone := c.clone()
+		depend := p.findProvider(injector.ProviderId)
+		if depend != nil {
+			depend.sort++
+			if !p.increaseProviderPrioritys(clone, depend) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+// checkCyclicProvider 遍历所有的provider，检测是否有两个provider循环依赖
+// 检测的过程中会提高被依赖的provider的优先级
+// checkCyclicProvider traverses all providers and checks for cyclic dependencies between two providers.
+// During the process, it increases the priority of providers being depended on.
+func (p *Parser) checkCyclicProvider() bool {
+	for _, pkg := range p.packages {
+		for _, fn := range pkg.funcs {
+			c := newChain()
+			if !p.increaseProviderPrioritys(c, fn) {
+				return false
+			}
+		}
+		pkg.funcs.Sort()
+	}
+	return true
 }
 
 // Start 启动分析注解，并生成go代码，写入到文件中
@@ -448,11 +587,11 @@ func (p *Parser) Start() {
 	}
 
 	// Check the legality of injectors and cyclic provider dependencies.
-	// if p.checkInjectorLegal() && p.checkCyclicProvider() {
-	// Generate Go code for initializing providers.
-	for _, pkg := range p.packages {
-		generator := NewGenerator(pkg)
-		generator.Do()
+	if p.checkInjectorLegal() && p.checkCyclicProvider() {
+		// Generate Go code.
+		for _, pkg := range p.packages {
+			generator := NewGenerator(pkg)
+			generator.Do()
+		}
 	}
-	// }
 }
