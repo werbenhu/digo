@@ -18,6 +18,7 @@
 
 ## Features
 - Use annotations in comments.
+- Automatic code generation.
 - Automatic detection of circular dependencies.
 - Compile-time dependency injection.
 - Automatic initialization.
