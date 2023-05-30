@@ -11,7 +11,7 @@
 
 # digo
 
-** A Golang tool that implements dependency injection through annotations. **
+**A Golang tool that implements dependency injection through annotations.**
 
 ## Quick Start
 
