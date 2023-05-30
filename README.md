@@ -66,7 +66,9 @@ go install github.com/werbenhu/digo/digocli@v0.0.1
 ### Generate Dependency Injection Code
 
 Open the command line and execute the following command. digocli will automatically generate the `digo.generated.go` source code file based on the annotations.
-`digocli`
+```sh
+digocli
+```
 
 ### Run the Code
 
