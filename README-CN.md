@@ -73,7 +73,7 @@ digocli
 ## 注解详情
 
 ### @provider
-@provider注解表示是一个实例提供者，该实例是一个单例模式
+@provider注解表示是一个实例提供者，该实例是一个单例
 - 示例
 ```
 // @provider({"id":"main.db"})
