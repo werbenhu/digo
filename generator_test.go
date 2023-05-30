@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2023 werbenhu
+// SPDX-FileContributor: werbenhu
+
 package digo
 
 import (
@@ -174,103 +178,3 @@ func TestDefineInjectStmts(t *testing.T) {
 	}, stmts[2])
 
 }
-
-// func TestDefineProviderFunc(t *testing.T) {
-// 	g := &Generator{}
-// 	fn := &DiFunc{
-// 		Name:       "MyProvider",
-// 		ProviderId: "my_provider_id",
-// 		Injectors: []*Injector{
-// 			{
-// 				Param: "dep1",
-// 				Type:  "Dep1",
-// 			},
-// 			{
-// 				Param: "dep2",
-// 				Type:  "Dep2",
-// 			},
-// 		},
-// 	}
-
-// 	// Define the provider function.
-// 	providerFunc := g.defineProviderFunc(fn)
-
-// 	// Assert the function name.
-// 	assert.Equal(t, "MyProvider", providerFunc.Name.Name)
-
-// 	// Assert the number of arguments.
-// 	assert.Len(t, providerFunc.Type.Params.List, 2)
-
-// 	// Assert the argument names and types.
-// 	arg1 := providerFunc.Type.Params.List[0]
-// 	assert.Equal(t, "dep1", arg1.Names[0].Name)
-// 	assert.Equal(t, "Dep1", arg1.Type.(*ast.Ident).Name)
-
-// 	arg2 := providerFunc.Type.Params.List[1]
-// 	assert.Equal(t, "dep2", arg2.Names[0].Name)
-// 	assert.Equal(t, "Dep2", arg2.Type.(*ast.Ident).Name)
-
-// 	// Assert the number of statements in the function body.
-// 	assert.Len(t, providerFunc.Body.List, 3)
-
-// 	// Assert the assignment statement for defining the object.
-// 	assignStmt := providerFunc.Body.List[0].(*ast.AssignStmt)
-// 	assert.Equal(t, 1, len(assignStmt.Lhs))
-// 	assert.Equal(t, "my_provider_id_obj", assignStmt.Lhs[0].(*ast.Ident).Name)
-// 	assert.NotNil(t, assignStmt.Rhs[0].(*ast.CallExpr))
-
-// 	// Assert the expression statement for registering the object as a singleton.
-// 	exprStmt := providerFunc.Body.List[1].(*ast.ExprStmt)
-// 	assert.NotNil(t, exprStmt.X.(*ast.CallExpr))
-
-// 	// Assert the comments.
-// 	comments := providerFunc.Doc.List
-// 	assert.Len(t, comments, 4)
-// 	assert.Equal(t, "\n// MyProvider registers the singleton object with ID my_provider_id into the DI object manager", comments[0].Text)
-// 	assert.Equal(t, "// Now you can retrieve the singleton object by using `obj, err := di.Provide(\"my_provider_id\")`.", comments[1].Text)
-// 	assert.Equal(t, "// The obj obtained from the above code is of type `any`.", comments[2].Text)
-// 	assert.Equal(t, "// You will need to forcefully cast the obj to its corresponding actual object type.", comments[3].Text)
-// }
-
-// func TestDefineProviderFuncs(t *testing.T) {
-// 	g := &Generator{}
-// 	fn1 := &DiFunc{
-// 		Name:       "MyProvider1",
-// 		ProviderId: "my_provider_id1",
-// 		Injectors: []*Injector{
-// 			{
-// 				Param: "dep1",
-// 				Type:  "Dep1",
-// 			},
-// 		},
-// 	}
-// 	fn2 := &DiFunc{
-// 		Name:       "MyProvider2",
-// 		ProviderId: "my_provider_id2",
-// 		Injectors: []*Injector{
-// 			{
-// 				Param: "dep2",
-// 				Type:  "Dep2",
-// 			},
-// 		},
-// 	}
-
-// 	// Define the provider functions.
-// 	g.defineProviderFuncs()
-
-// 	// Assert the number of declarations in the generator.
-// 	assert.Len(t, g.Decls, 2)
-
-// 	// Assert the provider function names.
-// 	assert.Equal(t, "MyProvider1", g.Decls[0].(*ast.FuncDecl).Name.Name)
-// 	assert.Equal(t, "MyProvider2", g.Decls[1].(*ast.FuncDecl).Name.Name)
-
-// 	// Assert the number of statements in the function bodies.
-// 	assert.Len(t, g.Decls[0].(*ast.FuncDecl).Body.List, 3)
-// 	assert.Len(t, g.Decls[1].(*ast.FuncDecl).Body.List, 3)
-
-// 	// Assert the function calls in the init() function.
-// 	assert.Len(t, g.CalledInitFuncs, 2)
-// 	assert.Equal(t, "MyProvider1", g.CalledInitFuncs[0].X.(*ast.CallExpr).Fun.(*ast.Ident).Name)
-// 	assert.Equal(t, "MyProvider2", g.CalledInitFuncs[1].X.(*ast.CallExpr).Fun.(*ast.Ident).Name)
-// }
