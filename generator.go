@@ -91,7 +91,7 @@ func newErrCheckStmt() ast.Stmt {
 	}
 }
 
-func newImportSpec(path, alias string) ast.Spec {
+func newImportSpec(path, alias string) *ast.ImportSpec {
 	spec := &ast.ImportSpec{
 		Path: newBasicLit(path),
 	}
@@ -106,7 +106,7 @@ func newImportSpec(path, alias string) ast.Spec {
 func objName(prefix string) string {
 	name := strings.ReplaceAll(prefix, ".", "_")
 	name = strings.ReplaceAll(name, "/", "_")
-	return prefix + "_obj"
+	return name + "_obj"
 }
 
 // Generator is a code generator for dependency injection.
@@ -139,6 +139,40 @@ func NewGenerator(pkg *DiPackage) *Generator {
 		GroupFunction:     "digo.RegisterMember",
 		GeneratedFileName: "digo.generated.go",
 	}
+}
+
+// defineInjectStmts analyzes the inject annotation and generates the corresponding code segment based on the annotation information.
+func (g *Generator) defineInjectStmts(inject *Injector) []ast.Stmt {
+	stmts := make([]ast.Stmt, 0)
+
+	// Add import statement if the package is specified.
+	if len(inject.Pkg) > 0 {
+		g.addImport(inject.Pkg, inject.Alias)
+	}
+
+	// Generate assignment statements for providing the object and handling the error.
+	stmts = append(stmts,
+		&ast.AssignStmt{
+			Lhs: newExprs(newIdent(objName(inject.Param)), newIdent("err")),
+			Tok: token.DEFINE,
+			Rhs: newExprs(
+				newCallExpr(
+					newSelectorExpr(g.ProvideFunction),
+					[]ast.Expr{newBasicLit(inject.ProviderId)},
+				),
+			),
+		},
+		newErrCheckStmt(),
+		&ast.AssignStmt{
+			Lhs: newExprs(newIdent(inject.Param)),
+			Tok: token.DEFINE,
+			Rhs: newExprs(&ast.TypeAssertExpr{
+				X:    newIdent(objName(inject.Param)),
+				Type: inject.Typ,
+			}),
+		})
+
+	return stmts
 }
 
 // defineProviderFunc creates a provider's singleton initialization function and returns an ast.FuncDecl object.
@@ -222,40 +256,6 @@ func (g *Generator) addImport(pkg string, alias string) {
 	if _, ok := g.ImportSpecs[key]; !ok {
 		g.ImportSpecs[key] = newImportSpec(pkg, alias)
 	}
-}
-
-// defineInjectStmts analyzes the inject annotation and generates the corresponding code segment based on the annotation information.
-func (g *Generator) defineInjectStmts(inject *Injector) []ast.Stmt {
-	stmts := make([]ast.Stmt, 0)
-
-	// Add import statement if the package is specified.
-	if len(inject.Pkg) > 0 {
-		g.addImport(inject.Pkg, inject.Alias)
-	}
-
-	// Generate assignment statements for providing the object and handling the error.
-	stmts = append(stmts,
-		&ast.AssignStmt{
-			Lhs: newExprs(newIdent(objName(inject.Param)), newIdent("err")),
-			Tok: token.DEFINE,
-			Rhs: newExprs(
-				newCallExpr(
-					newSelectorExpr(g.ProvideFunction),
-					[]ast.Expr{newBasicLit(inject.ProviderId)},
-				),
-			),
-		},
-		newErrCheckStmt(),
-		&ast.AssignStmt{
-			Lhs: newExprs(newIdent(inject.Param)),
-			Tok: token.DEFINE,
-			Rhs: newExprs(&ast.TypeAssertExpr{
-				X:    newIdent(objName(inject.Param)),
-				Type: inject.Typ,
-			}),
-		})
-
-	return stmts
 }
 
 // defineGroupFunc creates a group's member initialization function and returns an ast.FuncDecl object.

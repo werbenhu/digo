@@ -15,7 +15,7 @@ func main() {
 			&cli.StringFlag{
 				Name:  "path",
 				Value: "",
-				Usage: "language for the greeting",
+				Usage: "",
 			},
 		},
 		Action: func(cCtx *cli.Context) error {
