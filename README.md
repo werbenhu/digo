@@ -1,14 +1,11 @@
 # A Golang tool that implements dependency injection through annotations.
 
 
-
-
-
-
-
 [English](README.md) | [简体中文](README-CN.md)
 
 ## Quick Start
+
+For more examples, please refer to: [examples](examples).
 
 ### Write Code and Annotations
 
