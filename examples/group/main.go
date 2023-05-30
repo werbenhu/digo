@@ -19,7 +19,7 @@ type UserController struct {
 	Name string
 }
 
-// @group({"id":"group.controllers"})
+// @group({"id":"controllers"})
 // @inject({"param":"name", "id":"main.user.name"})
 func NewUserController(name string) *UserController {
 	return &UserController{
@@ -40,7 +40,7 @@ type RoleController struct {
 	Name string
 }
 
-// @group({"id":"group.controllers"})
+// @group({"id":"controllers"})
 // @inject({"param":"name", "id":"main.role.name"})
 func NewRoleController(name string) *RoleController {
 	return &RoleController{
@@ -53,7 +53,7 @@ func (c *RoleController) Print() {
 }
 
 func main() {
-	members, err := digo.Members("group.controllers")
+	members, err := digo.Members("controllers")
 
 	if err == nil {
 		for _, member := range members {
