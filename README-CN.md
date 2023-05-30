@@ -11,6 +11,8 @@
 [English](README.md) | [简体中文](README-CN.md)
 
 # digo
+> 注意: digo需要Go 版本 `1.20+`.
+
 **一个通过注解来实现依赖注入的golang工具**
 
 ## 快速开始
