@@ -16,6 +16,13 @@
 
 **A Golang tool that implements dependency injection through annotations.**
 
+## Features
+- Use annotations in comments.
+- Automatic detection of circular dependencies.
+- Compile-time dependency injection.
+- Automatic initialization.
+- Support for managing instance groups.
+
 ## Quick Start
 
 
