@@ -1,7 +1,17 @@
 
-# 一个通过注解来实现依赖注入的golang工具
+
+<div align='center'>
+<a href="https://github.com/werbenhu/digo/actions"><img src="https://github.com/werbenhu/digo/workflows/Go/badge.svg"></a>
+<a href="https://goreportcard.com/report/github.com/werbenhu/digo"><img src="https://goreportcard.com/badge/github.com/werbenhu/digo"></a>
+<a href="https://coveralls.io/github/werbenhu/digo?branch=master"><img src="https://coveralls.io/repos/github/werbenhu/digo/badge.svg?branch=master"></a>  
+<a href="https://github.com/werbenhu/digo"><img src="https://img.shields.io/github/license/mashape/apistatus.svg"></a>
+<a href="https://pkg.go.dev/github.com/werbenhu/digo"><img src="https://pkg.go.dev/badge/github.com/werbenhu/digo.svg"></a>
+</div>
 
 [English](README.md) | [简体中文](README-CN.md)
+
+# digo
+一个通过注解来实现依赖注入的golang工具
 
 ## 快速开始
 
