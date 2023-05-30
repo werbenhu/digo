@@ -295,7 +295,7 @@ func (g *Generator) defineGroupFunc(fn *DiFunc) *ast.FuncDecl {
 
 	// Register the member object with the group.
 	stmts = append(stmts, &ast.ExprStmt{
-		X: newCallExpr(newSelectorExpr(g.RegisterFunction), newExprs(
+		X: newCallExpr(newSelectorExpr(g.GroupFunction), newExprs(
 			newBasicLit(fn.GroupId),
 			newIdent("member")),
 		),

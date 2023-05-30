@@ -60,7 +60,7 @@ func main() {
 ### Install digocli Tool
 
 ```sh
-go install github.com/werbenhu/digo/digocli@v0.0.1
+go install github.com/werbenhu/digo/digocli@v0.0.3
 ```
 
 ### Generate Dependency Injection Code
