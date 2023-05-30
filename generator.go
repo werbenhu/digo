@@ -217,17 +217,19 @@ func (g *Generator) defineProviderFunc(fn *DiFunc) *ast.FuncDecl {
 func (g *Generator) defineProviderFuncs() {
 	// Iterate over each provider and generate the initialization function for the singleton object.
 	for _, fn := range g.Package.Funcs {
+		if len(fn.ProviderId) > 0 {
 
-		// Add the initialization function for the singleton object to the ast.File.
-		// For example, if the provider's ID is "xxx", then we add the init_xxx() function to the AST.
-		g.Decls = append(g.Decls, g.defineProviderFunc(fn))
+			// Add the initialization function for the singleton object to the ast.File.
+			// For example, if the provider's ID is "xxx", then we add the init_xxx() function to the AST.
+			g.Decls = append(g.Decls, g.defineProviderFunc(fn))
 
-		// The initialization function for the singleton object needs to be called in the init() function.
-		// Store the functions that need to be called in init() in the callFuncsInInit slice.
-		// Later when creating the init() function, we will call these initialization functions for the singleton objects.
-		g.CalledInitFuncs = append(g.CalledInitFuncs, &ast.ExprStmt{
-			X: newCallExpr(newIdent(fn.providerFuncName()), newExprs()),
-		})
+			// The initialization function for the singleton object needs to be called in the init() function.
+			// Store the functions that need to be called in init() in the callFuncsInInit slice.
+			// Later when creating the init() function, we will call these initialization functions for the singleton objects.
+			g.CalledInitFuncs = append(g.CalledInitFuncs, &ast.ExprStmt{
+				X: newCallExpr(newIdent(fn.providerFuncName()), newExprs()),
+			})
+		}
 	}
 }
 
