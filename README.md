@@ -12,8 +12,9 @@
 # digo
 
 > Note: Go version `1.20+` is required.
-**A Golang tool that implements dependency injection through annotations.**
 
+
+**A Golang tool that implements dependency injection through annotations.**
 
 ## Quick Start
 
