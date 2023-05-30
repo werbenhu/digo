@@ -360,6 +360,8 @@ func (g *Generator) output() error {
 	}
 
 	path := filepath.Join(g.Package.Folder, g.GeneratedFileName)
+	os.Remove(path)
+
 	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return err
