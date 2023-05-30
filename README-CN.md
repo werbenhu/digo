@@ -1,5 +1,5 @@
 
-# 一个轻量的Golang依赖注入工具
+# 一个Golang依赖注入工具
 
 [English](README.md) | [简体中文](README-CN.md)
 
