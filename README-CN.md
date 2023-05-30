@@ -57,15 +57,15 @@ func main() {
 }
 ```
 
-### 安装digocli工具
+### 安装digogen工具
 
 ```sh
-go install github.com/werbenhu/digo/digocli@v0.0.3
+go install github.com/werbenhu/digo/digogen@v1.0.0
 ```
 ### 生成依赖注入代码
-打开命令行执行下面命令,`digocli`将会根据注解自动生成`digo.generated.go`源码文件.
+打开命令行执行下面命令,`digogen`将会根据注解自动生成`digo.generated.go`源码文件.
 ```sh
-digocli
+digogen
 ```
 ### 运行代码
 `go run  .\digo.generated.go .\main.go`

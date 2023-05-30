@@ -57,17 +57,17 @@ func main() {
 }
 ```
 
-### Install digocli Tool
+### Install digogen Tool
 
 ```sh
-go install github.com/werbenhu/digo/digocli@v0.0.3
+go install github.com/werbenhu/digo/digogen@v1.0.0
 ```
 
 ### Generate Dependency Injection Code
 
-Open the command line and execute the following command. digocli will automatically generate the `digo.generated.go` source code file based on the annotations.
+Open the command line and execute the following command. digogen will automatically generate the `digo.generated.go` source code file based on the annotations.
 ```sh
-digocli
+digogen
 ```
 
 ### Run the Code
