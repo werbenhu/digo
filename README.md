@@ -1,5 +1,8 @@
 # A Lightweight Golang Dependency Injection Tool
 
+
+[English](README.md) | [简体中文](README-CN.md)
+
 ## Quick Start
 
 ### Write Code and Annotations
