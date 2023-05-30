@@ -1,5 +1,5 @@
 
-# 一个Golang依赖注入工具
+# 一个通过注解来实现依赖注入的golang工具
 
 [English](README.md) | [简体中文](README-CN.md)
 

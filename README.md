@@ -1,4 +1,9 @@
-# A Golang Dependency Injection Tool
+# A Golang tool that implements dependency injection through annotations.
+
+
+
+
+
 
 
 [English](README.md) | [简体中文](README-CN.md)
