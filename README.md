@@ -90,6 +90,7 @@ go install github.com/werbenhu/digo/digogen@v1.0.2
 
 Open the command line and execute the following command. digogen will automatically generate the `digo.generated.go` source code file based on the annotations.
 ```sh
+cd examples/simple
 digogen
 ```
 
