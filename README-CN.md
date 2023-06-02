@@ -57,20 +57,31 @@ func NewDb(url string) *Db {
 	}
 }
 
+type Redis struct {
+}
+
+// @provider({"id":"main.redis"})
+func NewRedis() *Redis {
+	return &Redis{}
+}
+
 type App struct {
-	Db *Db
+	db    *Db
+	redis *Redis
 }
 
 // @provider({"id":"main.app"})
 // @inject({"param":"db", "id":"main.db"})
-func NewApp(db *Db) *App {
+// @inject({"param":"redis", "id":"main.redis"})
+func NewApp(db *Db, redis *Redis) *App {
 	return &App{
-		Db: db,
+		db:    db,
+		redis: redis,
 	}
 }
 
 func (a *App) Start() {
-	log.Printf("app strat, db:%s\n", a.Db.url)
+	log.Printf("app strat, db:%s\n", a.db.url)
 }
 
 func main() {

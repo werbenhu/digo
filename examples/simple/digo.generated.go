@@ -32,6 +32,15 @@ func init_main_db() {
 	digo.RegisterSingleton("main.db", main_db_obj)
 }
 
+// init_main_redis registers the singleton object with ID main.redis into the DI object manager
+// Now you can retrieve the singleton object by using `obj, err := di.Provide("main.redis")`.
+// The obj obtained from the above code is of type `any`.
+// You will need to forcefully cast the obj to its corresponding actual object type.
+func init_main_redis() {
+	main_redis_obj := NewRedis()
+	digo.RegisterSingleton("main.redis", main_redis_obj)
+}
+
 // init_main_app registers the singleton object with ID main.app into the DI object manager
 // Now you can retrieve the singleton object by using `obj, err := di.Provide("main.app")`.
 // The obj obtained from the above code is of type `any`.
@@ -42,7 +51,12 @@ func init_main_app() {
 		panic(err)
 	}
 	db := db_obj.(*Db)
-	main_app_obj := NewApp(db)
+	redis_obj, err := digo.Provide("main.redis")
+	if err != nil {
+		panic(err)
+	}
+	redis := redis_obj.(*Redis)
+	main_app_obj := NewApp(db, redis)
 	digo.RegisterSingleton("main.app", main_app_obj)
 }
 
@@ -50,5 +64,6 @@ func init_main_app() {
 func init() {
 	init_main_db_url()
 	init_main_db()
+	init_main_redis()
 	init_main_app()
 }
