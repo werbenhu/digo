@@ -95,7 +95,7 @@ func main() {
 ### Install digogen Tool
 
 ```sh
-go install github.com/werbenhu/digo/digogen@v1.0.3
+go install github.com/werbenhu/digo/digogen@v1.0.4
 ```
 
 ### Generate Dependency Injection Code
