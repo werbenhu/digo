@@ -204,7 +204,7 @@ func (g *Generator) defineProviderFunc(fn *DiFunc) *ast.FuncDecl {
 
 	comments := []string{
 		fmt.Sprintf("\n// %s registers the singleton object with ID %s into the DI object manager", fn.providerFuncName(), fn.ProviderId),
-		fmt.Sprintf("// Now you can retrieve the singleton object by using `obj, err := di.Provide(\"%s\")`.", fn.ProviderId),
+		fmt.Sprintf("// Now you can retrieve the singleton object by using `obj, err := digo.Provide(\"%s\")`.", fn.ProviderId),
 		"// The obj obtained from the above code is of type `any`.",
 		"// You will need to forcefully cast the obj to its corresponding actual object type.",
 	}
@@ -307,7 +307,7 @@ func (g *Generator) defineGroupFunc(fn *DiFunc) *ast.FuncDecl {
 
 	comments := []string{
 		fmt.Sprintf("\n// Add a member object to group: %s", fn.GroupId),
-		fmt.Sprintf("// Now you can retrieve the group's member objects by using `objs, err := di.Members(\"%s\")`.", fn.GroupId),
+		fmt.Sprintf("// Now you can retrieve the group's member objects by using `objs, err := digo.Members(\"%s\")`.", fn.GroupId),
 		"// The objs obtained from the above code are of type `[]any`.",
 		"// You will need to forcefully cast the objs to their corresponding actual object types.",
 	}

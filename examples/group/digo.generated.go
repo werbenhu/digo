@@ -7,7 +7,7 @@ package main
 import "github.com/werbenhu/digo"
 
 // init_main_user_name registers the singleton object with ID main.user.name into the DI object manager
-// Now you can retrieve the singleton object by using `obj, err := di.Provide("main.user.name")`.
+// Now you can retrieve the singleton object by using `obj, err := digo.Provide("main.user.name")`.
 // The obj obtained from the above code is of type `any`.
 // You will need to forcefully cast the obj to its corresponding actual object type.
 func init_main_user_name() {
@@ -16,7 +16,7 @@ func init_main_user_name() {
 }
 
 // init_main_role_name registers the singleton object with ID main.role.name into the DI object manager
-// Now you can retrieve the singleton object by using `obj, err := di.Provide("main.role.name")`.
+// Now you can retrieve the singleton object by using `obj, err := digo.Provide("main.role.name")`.
 // The obj obtained from the above code is of type `any`.
 // You will need to forcefully cast the obj to its corresponding actual object type.
 func init_main_role_name() {
@@ -25,7 +25,7 @@ func init_main_role_name() {
 }
 
 // Add a member object to group: controllers
-// Now you can retrieve the group's member objects by using `objs, err := di.Members("controllers")`.
+// Now you can retrieve the group's member objects by using `objs, err := digo.Members("controllers")`.
 // The objs obtained from the above code are of type `[]any`.
 // You will need to forcefully cast the objs to their corresponding actual object types.
 func group_controllers_NewUserController() {
@@ -39,7 +39,7 @@ func group_controllers_NewUserController() {
 }
 
 // Add a member object to group: controllers
-// Now you can retrieve the group's member objects by using `objs, err := di.Members("controllers")`.
+// Now you can retrieve the group's member objects by using `objs, err := digo.Members("controllers")`.
 // The objs obtained from the above code are of type `[]any`.
 // You will need to forcefully cast the objs to their corresponding actual object types.
 func group_controllers_NewRoleController() {
