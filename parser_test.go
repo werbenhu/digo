@@ -619,14 +619,9 @@ func TestParser_Parse(t *testing.T) {
 	assert.Equal(t, "myFunction", diFunc.Name, "Expected function name to match")
 	assert.Equal(t, "myProvider", diFunc.ProviderId, "Expected provider ID to match")
 
-	file1, ok := diPkg.Files["file1"]
-	assert.True(t, ok)
+	_, ok := diPkg.Files["file1"]
+	assert.False(t, ok)
 	_, ok = diPkg.Files["file2"]
-	assert.True(t, ok)
-
-	_, ok = file1.Imports["package1"]
-	assert.True(t, ok)
-	_, ok = file1.Imports["package2"]
 	assert.True(t, ok)
 
 	// Test case 2: Package without functions

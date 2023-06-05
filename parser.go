@@ -454,6 +454,10 @@ func (p *Parser) parseFunc(pkg *DiPackage, fn *DiFunc, decl *ast.FuncDecl) error
 		}
 	}
 
+	if len(fn.ProviderId) == 0 && len(fn.GroupId) == 0 {
+		return nil
+	}
+
 	// Check if all parameters of the function have been injected
 	// 检查是否函数的所有参数都被注入了
 	for _, field := range decl.Type.Params.List {
@@ -501,7 +505,9 @@ func (p *Parser) parse(pkgs []*packages.Package) error {
 					}
 				}
 			}
-			diPkg.Files[syntax.Name.String()] = diFile
+			if len(diPkg.Funcs) > 0 {
+				diPkg.Files[syntax.Name.String()] = diFile
+			}
 		}
 
 		if len(diPkg.Funcs) > 0 {
