@@ -95,7 +95,7 @@ func main() {
 ### 安装digogen工具
 
 ```sh
-go install github.com/werbenhu/digo/digogen@v1.0.2
+go install github.com/werbenhu/digo/digogen@v1.0.3
 ```
 ### 生成依赖注入代码
 打开命令行执行下面命令,`digogen`将会根据注解自动生成`digo.generated.go`源码文件.
